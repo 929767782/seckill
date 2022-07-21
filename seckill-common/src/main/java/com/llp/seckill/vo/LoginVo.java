@@ -1,12 +1,13 @@
 package com.llp.seckill.vo;
 
 
-import com.llp.seckill.validator.IsMobile;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  *  登录页VO
@@ -16,8 +17,8 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class LoginVo {
 
-    @NotNull
-    @IsMobile  //因为框架没有校验手机格式注解，所以自己定义
+    @NotEmpty(message = "手机号不能为空")
+    @Pattern(regexp = "^[1]([3-9])[0-9]{9}$", message = "手机号格式不正确")
     private String mobile;
 
     @NotNull
