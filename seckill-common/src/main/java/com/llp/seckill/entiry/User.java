@@ -16,6 +16,7 @@ public class User {
     private String password;
     private String salt;
     private String head;
+    private String mobile;
     private Date registerDate;
     private Date lastLoginDate;
     private Integer loginCount;

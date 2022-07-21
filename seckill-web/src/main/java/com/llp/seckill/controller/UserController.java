@@ -29,4 +29,5 @@ public class UserController {
     public Result<User> info(Model model, User user) {
         return Result.success(user);
     }
+
 }

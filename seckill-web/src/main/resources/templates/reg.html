@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>注册</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <!-- jquery -->
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <!-- layer -->
+    <script type="text/javascript" th:src="@{/layer/layer.js}"></script>
+    <!-- md5.js -->
+    <script type="text/javascript" th:src="@{/js/md5.min.js}"></script>
+    <!-- common.js -->
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+
+</head>
+<body>
+
+<form name="registerForm" id="registerForm" method="post" style="width:50%; margin:0 auto">
+
+    <h2 style="text-align:center; margin-bottom: 20px">用户注册</h2>
+    <div class="form-group">
+        <div class="row">
+            <label class="form-label col-md-4">请输入用户名</label>
+            <div class="col-md-5">
+                <input id="nickname" name="nickname" class="form-control" type="text" placeholder="用户名" required="true"/>
+            </div>
+            <div class="col-md-1">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <label class="form-label col-md-4">请输入密码</label>
+            <div class="col-md-5">
+                <input id="password" name="password" class="form-control" type="password" placeholder="密码"
+                       required="true"/>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <label class="form-label col-md-4">请输入手机号码</label>
+            <div class="col-md-5">
+                <input id="mobile" name="mobile" class="form-control" type="text" placeholder="手机号码" required="true"
+                       />
+            </div>
+            <div class="col-md-1">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <label class="form-label col-md-4">请输入验证码</label>
+            <div class="col-md-5">
+                <input id="code" name="code" class="form-control" type="text" placeholder="验证码" required="true"
+                       />
+            </div>
+            <div class="col-md-1">
+            </div>
+        </div>
+        <div class="col-md-5">
+            <button class="btn btn-primary btn-block" type="submit" onclick="sendCode()">发送验证码</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            <button class="btn btn-primary btn-block" type="reset" onclick="reset()">重置</button>
+        </div>
+        <div class="col-md-5">
+            <button class="btn btn-primary btn-block" type="submit" onclick="register()">注册</button>
+        </div>
+    </div>
+
+</form>
+</body>
+<script  type="text/javascript" charset="utf-8">
+
+    function register() {
+//        加载中
+        g_showLoading();
+
+        var inputPass = $("#password").val();
+        var salt = g_passsword_salt;
+        var str = "" + salt.charAt(0) + salt.charAt(2) + inputPass + salt.charAt(5) + salt.charAt(4);
+        var password = md5(str);
+
+        $.ajax({
+            url: "/register/do_register",
+            type: "POST",
+            data: {
+                nickname: $("#nickname").val(),
+                mobile: $("#mobile").val(),
+                code: $("#code").val(),
+                password: password
+            },
+            success: function (data) {
+                layer.closeAll();
+                if (data.code == 0) {
+                    layer.msg("成功");
+                    window.location.href = "/login/to_login";
+                } else {
+                    layer.msg(data.msg);
+                }
+            },
+            error: function () {
+                layer.closeAll();
+            }
+        });
+    }
+
+    function sendCode () {
+        //如果有disabled，说明最近已经点过
+        if($(this).hasClass("disabled")){
+
+        }else {
+            timeOutChangeStyle();
+            //发送验证码
+            var mobile=$("#mobile").val();
+            $.get("/sms/sendCode?mobile="+mobile,function (data){
+                if (data.code!=0){
+                    alert(data.msg);
+                }
+            })
+        }
+    }
+
+    var time = 60;
+    function timeOutChangeStyle() {
+        //开启倒计时后设置标志属性disable的
+        $("#sendCode").attr("class", "disabled");
+        if(time==0){
+            $("#sendCode").text("点击发送验证码");
+            time=60;
+            $("#sendCode").attr("class", "");
+        }else {
+            $("#sendCode").text(time+"s后再次发送");
+            time--;
+            setTimeout("timeOutChangeStyle()", 1000);
+        }
+    }
+</script>
+</html>

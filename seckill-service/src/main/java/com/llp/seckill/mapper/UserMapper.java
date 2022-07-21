@@ -2,10 +2,7 @@ package com.llp.seckill.mapper;
 
 
 import com.llp.seckill.entiry.User;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 /**
  *   用户相关的Mapper
@@ -18,4 +15,16 @@ public interface UserMapper {
 
     @Update("update sk_user set password = #{password} where id = #{id}")
     public void update(User toBeUpdate);
+
+    @Insert("insert into sk_user(nickname,password,salt,mobile,register_date) values(#{nickname},#{password},#{salt},#{mobile},#{registerDate})")
+    public void save(User toBeSave);
+
+    @Select("select count(*) from sk_user where mobile = #{mobile}")
+    public long selectMobileCount(String mobile);
+
+    @Select("select count(*) from sk_user where nickname = #{nickname}")
+    public long selectNicknameCount(String nickname);
+
+
 }
+

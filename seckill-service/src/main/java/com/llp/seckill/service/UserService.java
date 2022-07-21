@@ -3,19 +3,22 @@ package com.llp.seckill.service;
 
 import com.llp.seckill.entiry.User;
 import com.llp.seckill.exception.GlobalException;
+import com.llp.seckill.mapper.UserMapper;
+import com.llp.seckill.redis.CodeKey;
+import com.llp.seckill.redis.RedisService;
+import com.llp.seckill.redis.UserKey;
 import com.llp.seckill.result.CodeMsg;
 import com.llp.seckill.utils.MD5Util;
 import com.llp.seckill.utils.UUIDUtil;
 import com.llp.seckill.vo.LoginVo;
-import com.llp.seckill.mapper.UserMapper;
-import com.llp.seckill.redis.RedisService;
-import com.llp.seckill.redis.UserKey;
+import com.llp.seckill.vo.RegVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  *   用户服务类
@@ -89,6 +92,50 @@ public class UserService {
         String token = UUIDUtil.uuid();
         addCookie(response, token, user);
         return token;
+    }
+    public boolean register(HttpServletResponse response, RegVo regVo) {
+        if (regVo == null) {
+            throw new GlobalException(CodeMsg.SERVER_ERROR);
+        }
+
+        String code = redisService.get(CodeKey.code,regVo.getMobile(),String.class);
+        if(!StringUtils.isEmpty(code) && regVo.getCode().equals(code.split("_")[0])){
+            redisService.delete(CodeKey.code,regVo.getMobile());
+            //1 检查电话号是否唯一
+            if(!checkMobileUnique(regVo.getMobile())){
+                return false;
+            }
+            //2 检查用户名是否唯一
+            if(!checkNickNameUnique(regVo.getNickname())){
+                return false;
+            }
+            //3 该用户信息唯一，进行插入
+            User entity = new User();
+            //3.1 保存基本信息
+            entity.setNickname(regVo.getNickname());
+            entity.setMobile(regVo.getMobile());
+            entity.setRegisterDate(new Date());
+            //3.2 使用加密保存密码
+            String salt = UUIDUtil.uuid().substring(0,8);
+            entity.setSalt(salt);
+            String calcPass = MD5Util.formPassToDBPass(regVo.getPassword(), salt);
+
+            entity.setPassword(calcPass);
+
+            // 4 保存用户信息
+            userMapper.save(entity);
+            return true;
+        }
+        return false;
+
+    }
+
+    public boolean checkNickNameUnique(String nickname) {
+        return userMapper.selectNicknameCount(nickname)==0;
+    }
+
+    private boolean checkMobileUnique(String mobile) {
+        return userMapper.selectMobileCount(mobile)==0;
     }
 
     /**

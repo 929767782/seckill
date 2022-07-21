@@ -105,19 +105,20 @@ INSERT INTO `sk_order_info` VALUES ('10', '18718185897', '1', null, 'iphoneX', '
 -- ----------------------------
 DROP TABLE IF EXISTS `sk_user`;
 CREATE TABLE `sk_user` (
-  `id` bigint(20) unsigned NOT NULL COMMENT '用户id',
-  `nickname` varchar(255) NOT NULL COMMENT '昵称',
-  `password` varchar(32) DEFAULT NULL COMMENT 'MD5(MD5(pass明文+固定salt)+salt',
-  `salt` varchar(10) DEFAULT NULL COMMENT '混淆盐',
-  `head` varchar(128) DEFAULT NULL COMMENT '头像，云存储的ID',
-  `register_date` datetime DEFAULT NULL COMMENT '注册时间',
-  `last_login_date` datetime DEFAULT NULL COMMENT '上次登录时间',
-  `login_count` int(11) DEFAULT NULL COMMENT '登录次数',
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '用户id',
+  `nickname` VARCHAR(255) NOT NULL COMMENT '昵称',
+  `password` VARCHAR(32) DEFAULT NULL COMMENT 'MD5(MD5(pass明文+固定salt)+salt',
+  `salt` VARCHAR(10) DEFAULT NULL COMMENT '混淆盐',
+  `head` VARCHAR(128) DEFAULT NULL COMMENT '头像，云存储的ID',
+  `mobile` CHAR(11) DEFAULT NULL COMMENT '手机号',
+  `register_date` DATETIME DEFAULT NULL COMMENT '注册时间',
+  `last_login_date` DATETIME DEFAULT NULL COMMENT '上次登录时间',
+  `login_count` INT(11) DEFAULT NULL COMMENT '登录次数',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of sk_user
 -- ----------------------------
-INSERT INTO `sk_user` VALUES ('18181818181', 'llp', 'b7797cce01b4b131b433b6acf4add449', '1a2b3c4d', null, '2022-05-21 21:10:21', '2022-05-21 21:10:25', '1');
-INSERT INTO `sk_user` VALUES ('18217272828', 'llp', 'b7797cce01b4b131b433b6acf4add449', '1a2b3c4d', null, '2022-05-21 21:10:21', '2022-05-21 21:10:25', '1');
+INSERT INTO `sk_user`(`nickname`,`password`,`salt`,`mobile`,`register_date`,`last_login_date`,`login_count`) VALUES ('llp', 'b7797cce01b4b131b433b6acf4add449', '1a2b3c4d','18181818181', '2022-05-21 21:10:21', '2022-05-21 21:10:25', '1');
+INSERT INTO `sk_user`(`nickname`,`password`,`salt`,`mobile`,`register_date`,`last_login_date`,`login_count`) VALUES ('ll', 'b7797cce01b4b131b433b6acf4add449', '1a2b3c4d', '19191919191','2022-05-21 21:10:21', '2022-05-21 21:10:25', '1');
