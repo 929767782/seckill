@@ -39,27 +39,27 @@ public class OrderService {
      */
     @Transactional
     public Order createOrder(User user, GoodsVo goods) {
-        Order orderInfo = new Order();
-        orderInfo.setCreateDate(new Date());
-        orderInfo.setDeliveryAddrId(0L);
-        orderInfo.setGoodsCount(1);
-        orderInfo.setGoodsId(goods.getId());
-        orderInfo.setGoodsName(goods.getGoodsName());
-        orderInfo.setGoodsPrice(goods.getGoodsPrice());
-        orderInfo.setOrderChannel(1);
-        orderInfo.setStatus(0);
-        orderInfo.setUserId(user.getId());
-        orderMapper.insert(orderInfo);
+        Order order = new Order();
+        order.setCreateDate(new Date());
+        order.setDeliveryAddrId(0L);
+        order.setGoodsCount(1);
+        order.setGoodsId(goods.getId());
+        order.setGoodsName(goods.getGoodsName());
+        order.setGoodsPrice(goods.getGoodsPrice());
+        order.setOrderChannel(1);
+        order.setStatus(0);
+        order.setUserId(user.getId());
+        orderMapper.insert(order);
 
         SeckillOrder seckillOrder = new SeckillOrder();
         seckillOrder.setGoodsId(goods.getId());
-        seckillOrder.setOrderId(orderInfo.getId());
+        seckillOrder.setOrderId(order.getId());
         seckillOrder.setUserId(user.getId());
         orderMapper.insertSeckillOrder(seckillOrder);
 
         redisService.set(OrderKey.getSeckillOrderByUidGid, "" + user.getId() + "_" + goods.getId(), seckillOrder);
 
-        return orderInfo;
+        return order;
     }
 
 
