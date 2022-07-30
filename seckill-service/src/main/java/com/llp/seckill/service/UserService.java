@@ -49,24 +49,22 @@ public class UserService {
         return user;
     }
 
+
+
     /**
      * 典型缓存同步场景：更新密码
      */
-    public boolean updatePassword(String token, long id, String formPass) {
-        //取user
-        User user = getById(id);
+    public boolean updatePassword(String token, String formPass) {
+        //根据token取user
+        User user = redisService.get(UserKey.token,token,User.class);
         if(user == null) {
-            throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
+            throw new GlobalException(CodeMsg.TOKEN_INVALID);
         }
         //更新数据库
         User toBeUpdate = new User();
-        toBeUpdate.setId(id);
+        toBeUpdate.setId(user.getId());
         toBeUpdate.setPassword(MD5Util.formPassToDBPass(formPass, user.getSalt()));
         userMapper.update(toBeUpdate);
-        //更新缓存：先删除再插入
-        redisService.delete(UserKey.getById, ""+id);
-        user.setPassword(toBeUpdate.getPassword());
-        redisService.set(UserKey.token, token, user);
         return true;
     }
 
@@ -74,24 +72,23 @@ public class UserService {
         if (loginVo == null) {
             throw new GlobalException(CodeMsg.SERVER_ERROR);
         }
-        String mobile = loginVo.getMobile();
-        String formPass = loginVo.getPassword();
-        //判断手机号是否存在
-        User user = getById(Long.parseLong(mobile));
-        if (user == null) {
-            throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
+        String loginAccount = loginVo.getLoginAccount();
+        //以用户名或电话号登录的进行查询
+        User user = userMapper.getByLoginAccount(loginAccount);
+        if(user!=null){
+            String loginPassword = MD5Util.formPassToDBPass(loginVo.getPassword(), user.getSalt());
+            if(loginPassword.equals(user.getPassword())){
+                //生成唯一id作为token
+                String token = UUIDUtil.uuid();
+                user.setPassword("");
+                addCookie(response, token, user);
+                return token;
+            }else{
+                throw new GlobalException(CodeMsg.PASSWORD_ERROR);
+            }
         }
-        //验证密码
-        String dbPass = user.getPassword();
-        String saltDB = user.getSalt();
-        String calcPass = MD5Util.formPassToDBPass(formPass, saltDB);
-        if (!calcPass.equals(dbPass)) {
-            throw new GlobalException(CodeMsg.PASSWORD_ERROR);
-        }
-        //生成唯一id作为token
-        String token = UUIDUtil.uuid();
-        addCookie(response, token, user);
-        return token;
+        throw new GlobalException(CodeMsg.LOGINACCOUNT_NOT_EXIST);
+
     }
     public boolean register(HttpServletResponse response, RegVo regVo) {
         if (regVo == null) {
