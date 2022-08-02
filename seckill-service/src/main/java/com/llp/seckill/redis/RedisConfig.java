@@ -14,8 +14,11 @@ public class RedisConfig {
     private int port;
     private int timeout;
     private String password;
+    //最大连接数
     private int poolMaxTotal;
+    //最大空闲数
     private int poolMaxIdle;
+    //最大建立连接等待时间
     private int poolMaxWait;
 
     public String getHost() {
