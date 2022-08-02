@@ -35,7 +35,7 @@ public class OrderService {
     }
 
     /**
-     * 因为要同时分别在订单详情表和秒杀订单表都新增一条数据，所以要保证两个操作是一个事物
+     * 因为要同时分别在订单详情表和秒杀订单表都新增一条数据，所以要保证两个操作是一个事务
      */
     @Transactional
     public Order createOrder(User user, GoodsVo goods) {
