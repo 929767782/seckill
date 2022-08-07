@@ -17,7 +17,7 @@ public class MQConfig {
     public static final String QUEUE = "queue";
     public static final String TOPIC_QUEUE1 = "topic.queue1";
     public static final String TOPIC_QUEUE2 = "topic.queue2";
-    public static final String TOPIC_EXCHANGE = "topicExchage";
+    public static final String TOPIC_EXCHANGE = "topic-exchange";
 
 
     /**
@@ -26,7 +26,7 @@ public class MQConfig {
      * */
     @Bean
     public Queue queue() {
-        return new Queue(QUEUE, true);
+        return new Queue(QUEUE, true,false,false,null);
     }
 //    @Bean
 //    public Queue queue() {
@@ -36,17 +36,24 @@ public class MQConfig {
     /**
      * Topic模式 交换机Exchange
      * */
+    /*
+       new一个queue，注意这不是java.utils中的queue
+       第一个参数是queue名字
+       第二个参数是queue是否持久化，第三个参数是queue是否是排他的（排他指的只有一个消费者可以连上队列，一般是false，也就是不排他）
+       第四个参数是auto-delete，如果为true，没有绑定交换机，则会自动删除
+       第五个参数是arguments
+     */
     @Bean
     public Queue topicQueue1() {
-        return new Queue(TOPIC_QUEUE1, true);
+        return new Queue(TOPIC_QUEUE1, true,false,false,null);
     }
     @Bean
     public Queue topicQueue2() {
-        return new Queue(TOPIC_QUEUE2, true);
+        return new Queue(TOPIC_QUEUE2, true,false,false,null);
     }
     @Bean
     public TopicExchange topicExchange(){
-        return new TopicExchange(TOPIC_EXCHANGE);
+        return new TopicExchange(TOPIC_EXCHANGE,true,false);
     }
     //绑定
     @Bean

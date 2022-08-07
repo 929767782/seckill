@@ -32,6 +32,9 @@ public class MQSender {
 		amqpTemplate.convertAndSend(MQConfig.TOPIC_EXCHANGE, "topic.key2", msg+"2");
 	}
 
+	// convertAndSend函数还支持只指定消息发送的队列名称，可以不指定交换机名称；
+    // 只要声明要发送的队列，也不需要和交换机绑定。
+    // 不过并非不使用交换机，实际上是使用RabbitMQ自带的默认交换机和指定队列进行路由。
 	public void sendSeckillMessage(SeckillMessage message){
         String msg = RedisService.beanToString(message);
         log.info("send message:"+msg);
