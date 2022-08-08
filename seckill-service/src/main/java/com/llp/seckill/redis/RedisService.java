@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 /**
  * redis服务
  */
@@ -35,6 +39,29 @@ public class RedisService {
         }
 
     }
+
+    /**
+     * 从redis连接池获取指定key前缀的实例
+     */
+    public <T> List<T> getRange(KeyPrefix prefix, Class<T> clazz) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+
+            Set<String> keys = jedis.keys(prefix.getPrefix()+"*");
+            List<T> list = new ArrayList<>();
+            for(String key:keys){
+                String str = jedis.get(key);
+                T t = stringToBean(str,clazz);
+                list.add(t);
+            }
+            return list;
+        } finally {
+            returnToPool(jedis);
+        }
+
+    }
+
 
     /**
      * 存储对象

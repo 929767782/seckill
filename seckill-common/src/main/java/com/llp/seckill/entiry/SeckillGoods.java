@@ -16,5 +16,4 @@ public class SeckillGoods {
     private Integer stockCount;
     private Date startDate;
     private Date endDate;
-    private int version;
 }

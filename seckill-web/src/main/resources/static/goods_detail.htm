@@ -44,6 +44,7 @@
             <td>
                 <button class="btn btn-primary btn-block" type="button" id="buyButton" onclick="doSeckill()">立即秒杀</button>
                 <input type="hidden" name="goodsId"  id="goodsId" />
+                <input type="hidden" name="randomCode"  id="randomCode" />
             </td>
         </tr>
         <tr>
@@ -103,6 +104,7 @@
             type: "POST",
             data: {
                 goodsId: $("#goodsId").val(),
+                randomCode: $("#randomCode").val()
             },
             success: function (data) {
                 if (data.code == 0) {
@@ -134,6 +136,7 @@
         $("#goodsPrice").text(goods.goodsPrice);
         $("#seckillPrice").text(goods.seckillPrice);
         $("#stockCount").text(goods.stockCount);
+        $("#randomCode").val(goods.randomCode);
     }
 
     $(function () {

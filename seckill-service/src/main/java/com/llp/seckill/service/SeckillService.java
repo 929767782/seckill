@@ -4,12 +4,16 @@ package com.llp.seckill.service;
 import com.llp.seckill.entiry.Order;
 import com.llp.seckill.entiry.SeckillOrder;
 import com.llp.seckill.entiry.User;
-import com.llp.seckill.vo.GoodsVo;
+import com.llp.seckill.redis.GoodsKey;
 import com.llp.seckill.redis.RedisService;
 import com.llp.seckill.redis.SeckillKey;
+import com.llp.seckill.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  *  秒杀服务类
@@ -53,6 +57,24 @@ public class SeckillService {
             }
         }
     }
+
+    public void uploadSeckillSkuLatest3Days(){
+        List<GoodsVo> goodsVos = goodsService.listGoodsVoBetweenTime();
+        for(GoodsVo good:goodsVos){
+            //生成商品随机码，防止恶意攻击
+            String token = UUID.randomUUID().toString().replace("-", "");
+            good.setRandomCode(token);
+            long expire = good.getEndDate().getTime() - System.currentTimeMillis();
+            expire = expire/1000;
+            //商品上架
+            //key为商品id，value为商品vo
+            redisService.set(GoodsKey.getUploadGoods((int)expire),good.getId().toString(),good);
+            //key为商品随机码，value为商品库存
+            redisService.set(GoodsKey.getGoodsStock((int)expire),token,good.getStockCount());
+        }
+
+    }
+
 
     private void setGoodsOver(Long goodsId) {
         redisService.set(SeckillKey.isGoodsOver, ""+goodsId, true);

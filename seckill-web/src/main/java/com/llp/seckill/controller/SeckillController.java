@@ -4,17 +4,16 @@ package com.llp.seckill.controller;
 import com.google.common.util.concurrent.RateLimiter;
 import com.llp.seckill.entiry.SeckillOrder;
 import com.llp.seckill.entiry.User;
-import com.llp.seckill.result.CodeMsg;
-import com.llp.seckill.result.Result;
-import com.llp.seckill.vo.GoodsVo;
 import com.llp.seckill.rabbitmq.MQSender;
 import com.llp.seckill.rabbitmq.SeckillMessage;
 import com.llp.seckill.redis.GoodsKey;
 import com.llp.seckill.redis.RedisService;
+import com.llp.seckill.result.CodeMsg;
+import com.llp.seckill.result.Result;
 import com.llp.seckill.service.GoodsService;
 import com.llp.seckill.service.OrderService;
 import com.llp.seckill.service.SeckillService;
-import org.springframework.beans.factory.InitializingBean;
+import com.llp.seckill.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Controller
 @RequestMapping("/seckill")
-public class SeckillController implements InitializingBean {
+public class SeckillController{
 
     @Autowired
     GoodsService goodsService;
@@ -53,7 +52,7 @@ public class SeckillController implements InitializingBean {
     RateLimiter rateLimiter = RateLimiter.create(10);
 
     //做标记，判断该商品是否被处理过了
-    private HashMap<Long, Boolean> localOverMap = new HashMap<Long, Boolean>();
+    private Set<String> localOverSet = new HashSet<>();
 
     /**
      * GET POST
@@ -69,7 +68,7 @@ public class SeckillController implements InitializingBean {
      */
     @RequestMapping(value = "/do_seckill", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Integer> list(Model model, User user, @RequestParam("goodsId") long goodsId) {
+    public Result<Integer> list(Model model, User user, @RequestParam("goodsId") long goodsId, @RequestParam("randomCode") String randomCode) {
 
         if (!rateLimiter.tryAcquire(1000, TimeUnit.MILLISECONDS)) {
             return  Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
@@ -78,27 +77,27 @@ public class SeckillController implements InitializingBean {
         if (user == null) {
             return Result.error(CodeMsg.SESSION_ERROR);
         }
+        GoodsVo goodsVo = redisService.get(GoodsKey.getUploadGoods, "" + goodsId, GoodsVo.class);
+        if(!goodsVo.getRandomCode().equals(randomCode)){
+            return Result.error(CodeMsg.NOT_START);
+        }
         model.addAttribute("user", user);
-        //内存标记，减少redis访问
-        boolean over = localOverMap.get(goodsId);
-        if (over) {
-            return Result.error(CodeMsg.SECKILL_OVER);
-        }
-        //预减库存
-        long stock = redisService.decr(GoodsKey.getGoodsStock, "" + goodsId);//10
-        if (stock < 0) {
-            afterPropertiesSet();
-            long stock2 = redisService.decr(GoodsKey.getGoodsStock, "" + goodsId);//10
-            if(stock2 < 0){
-                localOverMap.put(goodsId, true);
-                return Result.error(CodeMsg.SECKILL_OVER);
-            }
-        }
         //判断重复秒杀
         SeckillOrder order = orderService.getOrderByUserIdGoodsId(user.getId(), goodsId);
         if (order != null) {
             return Result.error(CodeMsg.REPEATE_SECKILL);
         }
+        //内存标记，减少redis访问
+        if(localOverSet.contains(randomCode)){
+            return Result.error(CodeMsg.SECKILL_OVER);
+        }
+        //预减库存
+        long stock = redisService.decr(GoodsKey.getGoodsStock, randomCode);//10
+        if (stock < 0) {
+            localOverSet.add(randomCode);
+            return Result.error(CodeMsg.SECKILL_OVER);
+        }
+
         //入队
         SeckillMessage message = new SeckillMessage();
         message.setUser(user);
@@ -107,21 +106,7 @@ public class SeckillController implements InitializingBean {
         return Result.success(0);//排队中
     }
 
-    /**
-     * 系统初始化,将商品信息加载到redis和本地内存
-     */
-    @Override
-    public void afterPropertiesSet() {
-        List<GoodsVo> goodsVoList = goodsService.listGoodsVo();
-        if (goodsVoList == null) {
-            return;
-        }
-        for (GoodsVo goods : goodsVoList) {
-            redisService.set(GoodsKey.getGoodsStock, "" + goods.getId(), goods.getStockCount());
-            //初始化商品都是没有处理过的
-            localOverMap.put(goods.getId(), false);
-        }
-    }
+
 
     /**
      * orderId：成功

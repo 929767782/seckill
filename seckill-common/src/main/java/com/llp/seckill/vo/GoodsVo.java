@@ -17,6 +17,7 @@ public class GoodsVo extends Goods {
     private Integer stockCount;
     private Date startDate;
     private Date endDate;
-    private Integer version;
+    //当前商品秒杀的随机码
+    private String randomCode;
 }
 

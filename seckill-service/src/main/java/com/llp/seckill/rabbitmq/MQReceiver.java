@@ -1,18 +1,17 @@
 package com.llp.seckill.rabbitmq;
 
 
-import com.llp.seckill.entiry.SeckillOrder;
 import com.llp.seckill.entiry.User;
+import com.llp.seckill.redis.RedisService;
 import com.llp.seckill.service.GoodsService;
 import com.llp.seckill.service.OrderService;
 import com.llp.seckill.service.SeckillService;
 import com.llp.seckill.vo.GoodsVo;
-import com.llp.seckill.redis.RedisService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *  接收消息
@@ -42,15 +41,10 @@ public class MQReceiver {
         User user = m.getUser();
         long goodsId = m.getGoodsId();
 
-        GoodsVo goodsVo = goodsService.getGoodsVoByGoodsId(goodsId);
+        //这步可有可无，就是再判断一下库存有没有
+        GoodsVo goodsVo = goodsService.getUploadGoodsVoByGoodsId(goodsId);
         int stock = goodsVo.getStockCount();
         if(stock <= 0){
-            return;
-        }
-
-        //判断重复秒杀
-        SeckillOrder order = orderService.getOrderByUserIdGoodsId(user.getId(), goodsId);
-        if(order != null) {
             return;
         }
 

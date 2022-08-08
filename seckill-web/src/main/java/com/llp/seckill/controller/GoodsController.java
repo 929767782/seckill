@@ -57,7 +57,7 @@ public class GoodsController {
         if (!StringUtils.isEmpty(html)) {
             return html;
         }
-        List<GoodsVo> goodsList = goodsService.listGoodsVo();
+        List<GoodsVo> goodsList = goodsService.listUploadGoodsVo();
         model.addAttribute("user", user);
         model.addAttribute("goodsList", goodsList);
 
@@ -128,9 +128,8 @@ public class GoodsController {
     @RequestMapping(value = "/detail/{goodsId}")
     @ResponseBody
     public Result<GoodsDetailVo> detail(HttpServletRequest request, HttpServletResponse response, Model model, User user, @PathVariable("goodsId") long goodsId) {
-
         //根据id查询商品详情
-        GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
+        GoodsVo goods = goodsService.getUploadGoodsVoByGoodsId(goodsId);
         model.addAttribute("goods", goods);
 
         long startTime = goods.getStartDate().getTime();
@@ -143,6 +142,7 @@ public class GoodsController {
         if (now < startTime) {//秒杀还没开始，倒计时
             seckillStatus = 0;
             remainSeconds = (int) ((startTime - now) / 1000);
+            goods.setRandomCode("");
         } else if (now > endTime) {//秒杀已经结束
             seckillStatus = 2;
             remainSeconds = -1;
