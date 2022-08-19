@@ -16,7 +16,10 @@
     <modules>
         <module>seckill-common</module>
         <module>seckill-web</module>
-        <module>seckill-service</module>
+        <module>seckill-user</module>
+        <module>seckill-order</module>
+        <module>seckill-goods</module>
+        <module>seckill-kill</module>
     </modules>
     <packaging>pom</packaging>
     <properties>

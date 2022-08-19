@@ -22,7 +22,7 @@ seckill
 |
 └── seckill-web -- web端实现
       |     ├── config -- webconfig的相关配置。
-      |     ├── controller -- controller层。给前端返回数据以及接收前端的数据。
+      |     ├── com.llp.kill.controller -- controller层。给前端返回数据以及接收前端的数据。
       |     └── MainApplication -- 服务器启动类。
       |
       |
