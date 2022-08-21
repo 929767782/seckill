@@ -1,4 +1,4 @@
-package com.llp.goods.config;
+package com.llp.order.interceptor;
 
 import com.llp.common.entiry.User;
 import com.llp.common.service.UserService;

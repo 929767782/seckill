@@ -1,7 +1,6 @@
 # seckill
 ### 项目描述
-本系统是基于 SpringBoot 开发的高并发限时秒杀系统，实现了多种注册和登录方式，还包括查看商品列表、秒杀、下单等功
-能，项目中针对高并发情况实现了系统缓存、异步和限流等技术。
+本系统将不同模块解耦成分布式架构，模块之间采用 rabbitMQ 和自己开发的 rpc 框架进行通信。除了实现基本的注册 和登录、查看商品列表、秒杀、下单等功能，项目中还针对高并发情况实现了系统缓存、异步和限流等技术。
 
 ### 项目结构
 ``` lua
@@ -11,24 +10,20 @@ seckill
 |          ├── execption -- 全局异常处理器。
 |          ├── result -- 返回给前端的model封装，包括状态码等信息。
 |          ├── utils -- 通用工具包。包括数据库连接、http工具包等。
-|          └── vo -- view model，前端表单提交数据的封装
+|          ├── vo -- view model，前端表单提交数据的封装
+|          ├── static -- 前端静态资源
+|          └── templates -- 前端html页面
 |
-├── seckill-service -- 服务端实现
-|          ├── mapper -- 数据持久层的工作。
-|          ├── rabbitmq -- 消息队列相关操作，包括发送消息，接收消息。
-|          ├── redis -- 对redis客户端操作的封装。
-|          ├── registry -- 服务注册功能的封装
-|          └── service -- 业务逻辑的处理
-|
-└── seckill-web -- web端实现
-      |     ├── config -- webconfig的相关配置。
-      |     ├── com.llp.kill.controller -- controller层。给前端返回数据以及接收前端的数据。
-      |     └── MainApplication -- 服务器启动类。
-      |
-      |
-      └──────── static -- 前端静态资源
-            ├── templates -- 前端html页面
-            └── application.properties 配置文件
+└── seckill-goods/kill/order/user -- 商品库存模块/秒杀模块/订单模块/用户模块实现
+           ├── controller -- 控制层的工作。
+           ├── service -- 业务层的工作。
+           ├── mapper -- 数据持久层的工作。
+           ├── interceptor -- 拦截器的配置。
+           ├── rabbitmq -- 消息队列相关配置与操作。
+           ├── redis -- 对redis客户端操作的封装。
+           ├── remote -- 远程服务的api接口
+           └── rpc -- rpc框架的配置
+
       
 ```
 

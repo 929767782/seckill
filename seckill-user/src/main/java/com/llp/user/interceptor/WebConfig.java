@@ -1,4 +1,4 @@
-package com.llp.order.config;
+package com.llp.user.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

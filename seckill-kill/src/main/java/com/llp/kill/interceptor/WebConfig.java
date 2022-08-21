@@ -1,4 +1,4 @@
-package com.llp.goods.config;
+package com.llp.kill.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

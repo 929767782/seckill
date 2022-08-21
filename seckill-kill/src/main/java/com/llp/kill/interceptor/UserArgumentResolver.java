@@ -1,4 +1,4 @@
-package com.llp.kill.config;
+package com.llp.kill.interceptor;
 
 import com.llp.common.entiry.User;
 import com.llp.common.service.UserService;
