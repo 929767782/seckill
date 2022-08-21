@@ -1,5 +1,6 @@
 package com.llp.user.mapper;
 
+import com.llp.common.entity.User;
 import org.apache.ibatis.annotations.*;
 
 /**

@@ -4,5 +4,5 @@ import com.llp.common.entity.SeckillOrder;
 
 public interface OrderService {
 
-    public SeckillOrder getSeckillOrderByUserIdGoodsId();
+    SeckillOrder getSeckillOrderByUserIdGoodsId(long userId, long goodsId);
 }

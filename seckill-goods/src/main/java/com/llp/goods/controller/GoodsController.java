@@ -2,11 +2,11 @@ package com.llp.goods.controller;
 
 import com.llp.common.entity.User;
 import com.llp.common.result.Result;
+import com.llp.common.vo.GoodsDetailVo;
+import com.llp.common.vo.GoodsVo;
 import com.llp.goods.redis.GoodsKey;
 import com.llp.goods.redis.RedisService;
 import com.llp.goods.service.GoodsService;
-import com.llp.goods.vo.GoodsDetailVo;
-import com.llp.goods.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

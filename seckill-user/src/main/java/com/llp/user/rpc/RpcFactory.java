@@ -1,8 +1,9 @@
 package com.llp.user.rpc;
 
-import com.llp.goods.remote.OrderService;
+
 import com.llp.rpc.client.manager.ClientProxy;
 import com.llp.rpc.client.manager.RpcClientManager;
+import com.llp.user.remote.OrderService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

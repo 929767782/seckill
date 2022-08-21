@@ -1,6 +1,6 @@
 package com.llp.goods.mapper;
 
-import com.llp.goods.vo.GoodsVo;
+import com.llp.common.vo.GoodsVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

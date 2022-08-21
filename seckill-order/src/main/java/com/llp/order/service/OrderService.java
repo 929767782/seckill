@@ -1,5 +1,9 @@
 package com.llp.order.service;
 
+import com.llp.common.entity.Order;
+import com.llp.common.entity.SeckillOrder;
+import com.llp.common.entity.User;
+import com.llp.common.vo.GoodsVo;
 import com.llp.order.mapper.OrderMapper;
 import com.llp.order.rabbitmq.MQSender;
 import com.llp.order.rabbitmq.StockReleaseMessage;

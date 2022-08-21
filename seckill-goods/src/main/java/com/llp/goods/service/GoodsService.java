@@ -1,12 +1,12 @@
 package com.llp.goods.service;
 
 import com.llp.common.entity.SeckillOrder;
+import com.llp.common.vo.GoodsVo;
 import com.llp.goods.mapper.GoodsMapper;
 import com.llp.goods.rabbitmq.StockReleaseMessage;
 import com.llp.goods.redis.GoodsKey;
 import com.llp.goods.redis.RedisService;
 import com.llp.goods.remote.OrderService;
-import com.llp.goods.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

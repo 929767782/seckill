@@ -1,7 +1,7 @@
 package com.llp.kill.rabbitmq;
 
 
-import com.llp.common.entiry.User;
+import com.llp.common.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 

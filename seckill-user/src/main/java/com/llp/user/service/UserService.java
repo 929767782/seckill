@@ -1,15 +1,16 @@
 package com.llp.user.service;
 
+import com.llp.common.entity.User;
 import com.llp.common.exception.GlobalException;
 import com.llp.common.result.CodeMsg;
 import com.llp.common.utils.MD5Util;
 import com.llp.common.utils.UUIDUtil;
+import com.llp.common.vo.LoginVo;
+import com.llp.common.vo.RegVo;
 import com.llp.user.mapper.UserMapper;
 import com.llp.user.redis.CodeKey;
 import com.llp.user.redis.RedisService;
 import com.llp.user.redis.UserKey;
-import com.llp.user.vo.LoginVo;
-import com.llp.user.vo.RegVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -17,6 +18,8 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+
+import static com.llp.common.constant.AuthServerConstant.COOKIE_NAME_TOKEN;
 
 /**
  *   用户服务类
@@ -30,7 +33,6 @@ public class UserService {
     @Autowired
     RedisService redisService;
 
-    public static final String COOKIE_NAME_TOKEN = "token";
 
     public User getById(long id) {
         //对象缓存

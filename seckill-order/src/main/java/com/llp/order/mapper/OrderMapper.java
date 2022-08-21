@@ -1,5 +1,7 @@
 package com.llp.order.mapper;
 
+import com.llp.common.entity.Order;
+import com.llp.common.entity.SeckillOrder;
 import org.apache.ibatis.annotations.*;
 
 /**

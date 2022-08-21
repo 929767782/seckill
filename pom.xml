@@ -15,7 +15,6 @@
     </parent>
     <modules>
         <module>seckill-common</module>
-        <module>seckill-web</module>
         <module>seckill-user</module>
         <module>seckill-order</module>
         <module>seckill-goods</module>

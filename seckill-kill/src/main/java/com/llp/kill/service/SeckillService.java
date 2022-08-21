@@ -1,6 +1,9 @@
 package com.llp.kill.service;
 
+import com.llp.common.entity.Order;
 import com.llp.common.entity.SeckillOrder;
+import com.llp.common.entity.User;
+import com.llp.common.vo.GoodsVo;
 import com.llp.kill.redis.GoodsKey;
 import com.llp.kill.redis.RedisService;
 import com.llp.kill.redis.SeckillKey;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 /**

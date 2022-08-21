@@ -1,7 +1,8 @@
 package com.llp.user.interceptor;
 
-import com.llp.common.entiry.User;
-import com.llp.common.service.UserService;
+
+import com.llp.common.entity.User;
+import com.llp.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.llp.common.constant.AuthServerConstant.COOKIE_NAME_TOKEN;
 
 
 /**
@@ -46,8 +49,8 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
         HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
 
-        String paramToken = request.getParameter(UserService.COOKIE_NAME_TOKEN);
-        String cookieToken = getCookieValue(request, UserService.COOKIE_NAME_TOKEN);
+        String paramToken = request.getParameter(COOKIE_NAME_TOKEN);
+        String cookieToken = getCookieValue(request, COOKIE_NAME_TOKEN);
         if (StringUtils.isEmpty(cookieToken) && StringUtils.isEmpty(paramToken)) {
             return null;
         }
